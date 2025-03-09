@@ -5,29 +5,37 @@
 //  Created by Broderick Everitt-deJonge on 2025-03-08.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct CategoryList: View {
     @Query(sort: \Category.title) private var categories: [Category]
     @Environment(\.modelContext) private var context
     @State private var newCategory: Category?
-    
+
     var body: some View {
         NavigationSplitView {
-            List {
-                ForEach(categories) { category in
-                    NavigationLink("\(category.title)") {
-                        CategoryDetail(category: category)
+            Group {
+                if !categories.isEmpty {
+                    List {
+                        ForEach(categories) { category in
+                            NavigationLink("\(category.title)") {
+                                CategoryDetail(category: category)
+                            }
+                        }
+                        .onDelete(perform: deleteCategory(indexes:))
                     }
+                } else {
+                    ContentUnavailableView(
+                        "Add some categories", systemImage: "window.horizontal.closed")
                 }
-                .onDelete(perform: deleteCategory(indexes:))
             }
             .navigationTitle("Categories")
             .toolbar {
                 ToolbarItem {
                     Button(
-                        "Add Category", systemImage: "plus", action: addCategory)
+                        "Add Category", systemImage: "plus", action: addCategory
+                    )
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     EditButton()
@@ -44,7 +52,7 @@ struct CategoryList: View {
                 .navigationTitle("Category")
                 .navigationBarTitleDisplayMode(.inline)
         }
-    
+
     }
     private func addCategory() {
         let defaultCategory = Category(title: "")
