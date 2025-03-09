@@ -18,6 +18,12 @@ struct CategoryDetail: View {
         self.category = category
         self.isNew = isNew
     }
+    
+    var sortedExpenses: [Expense] {
+        category.expenses.sorted { first, second in
+            first.createdAt > second.createdAt
+        }
+    }
 
     var body: some View {
         Form {
@@ -25,7 +31,7 @@ struct CategoryDetail: View {
            
             if !category.expenses.isEmpty {
                 Section("Related Expenses") {
-                    ForEach(category.expenses) { expense in
+                    ForEach(sortedExpenses) { expense in
                         Text(expense.title)
 
                     }
@@ -38,12 +44,7 @@ struct CategoryDetail: View {
             if isNew {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        do {
-                            try context.save()
-                            dismiss()
-                        } catch {
-                            print("Error saving category: \(error)")
-                        }
+                        dismiss()
                     }
                 }
                 ToolbarItem(placement: .cancellationAction) {
