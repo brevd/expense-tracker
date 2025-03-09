@@ -11,7 +11,7 @@ struct ContentView: View {
     var body: some View {
         TabView{
             Tab("Expenses", systemImage: "creditcard.fill") {
-                ExpenseList()
+                FilteredExpenseList()
             }
             Tab("Categories", systemImage: "window.horizontal.closed") {
                CategoryList()
