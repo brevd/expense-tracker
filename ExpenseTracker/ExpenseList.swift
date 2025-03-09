@@ -30,15 +30,23 @@ struct ExpenseList: View {
     }
 
     var body: some View {
-        List {
-            ForEach(expenses) { expense in
-                NavigationLink(
-                    "\(expense.title) - \(expense.amount.formatted(.currency(code: "CAD")))"
-                ) {
-                    ExpenseDetail(expense: expense)
+        Group {
+            if !expenses.isEmpty {
+                List {
+                    ForEach(expenses) { expense in
+                        NavigationLink(
+                            "\(expense.title) - \(expense.amount.formatted(.currency(code: "CAD")))"
+                        ) {
+                            ExpenseDetail(expense: expense)
+                        }
+                    }
+                    .onDelete(perform: deleteExpense(indexes:))
                 }
+            } else {
+                ContentUnavailableView(
+                    "Add some expenses",
+                    systemImage: "creditcard.fill")
             }
-            .onDelete(perform: deleteExpense(indexes:))
         }
         .navigationTitle("Expenses")
         .toolbar {
