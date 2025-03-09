@@ -18,21 +18,30 @@ struct CategoryDetail: View {
         self.category = category
         self.isNew = isNew
     }
-
+    
+    // Add a sum of totalExpense
+    private var totalExpense: Double {
+        category.expenses.reduce(0.0) { $0 + (Double(truncating: $1.amount as NSNumber)) }
+    }
+    
     var body: some View {
         Form {
             TextField("Title", text: $category.title)
            
             if !category.expenses.isEmpty {
-                Section("Related Expenses") {
+                Section(header: Text("Total: \(String(format: "%.2f", totalExpense))")) {
                     ForEach(category.expenses) { expense in
-                        Text(expense.title)
-
+                        HStack {
+                            Text(expense.title)
+                            Spacer()
+                            Text(String(format: "%.2f", Double(truncating: expense.amount as NSNumber)))
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
             }
         }
-        .navigationTitle(isNew ? "New Category" : "Category Detail")
+        .navigationTitle(isNew ? "New Category" : "\(category.title) (\(totalExpense, specifier: "%.2f"))")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if isNew {
@@ -63,3 +72,4 @@ struct CategoryDetail: View {
     }
     .modelContainer(SampleData.shared.modelContainer)
 }
+
