@@ -1,10 +1,3 @@
-//
-//  CategoryDetail.swift
-//  ExpenseTracker
-//
-//  Created by Broderick Everitt-deJonge on 2025-03-08.
-//
-
 import SwiftUI
 
 struct CategoryDetail: View {
@@ -19,9 +12,9 @@ struct CategoryDetail: View {
         self.isNew = isNew
     }
     
-    // Add a sum of totalExpense
+    // Compute totalExpense correctly (remove optional handling)
     private var totalExpense: Double {
-        category.expenses.reduce(0.0) { $0 + (Double(truncating: $1.amount as NSNumber)) }
+        category.expenses.reduce(0.0) { $0 + NSDecimalNumber(decimal: $1.amount).doubleValue }
     }
     
     var body: some View {
@@ -29,19 +22,23 @@ struct CategoryDetail: View {
             TextField("Title", text: $category.title)
            
             if !category.expenses.isEmpty {
-                Section(header: Text("Total: \(String(format: "%.2f", totalExpense))")) {
+                Section(header: Text("Total: $\(totalExpense, specifier: "%.2f")")) {
                     ForEach(category.expenses) { expense in
                         HStack {
                             Text(expense.title)
                             Spacer()
-                            Text(String(format: "%.2f", Double(truncating: expense.amount as NSNumber)))
+                            Text("$\(NSDecimalNumber(decimal: expense.amount).doubleValue, specifier: "%.2f")")
                                 .foregroundStyle(.secondary)
                         }
                     }
                 }
+            } else {
+                Section {
+                    Text("No expenses yet").foregroundStyle(.secondary)
+                }
             }
         }
-        .navigationTitle(isNew ? "New Category" : "\(category.title) (\(totalExpense, specifier: "%.2f"))")
+        .navigationTitle(isNew ? "New Category" : "\(category.title) ($\(totalExpense, specifier: "%.2f"))")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if isNew {
@@ -72,4 +69,3 @@ struct CategoryDetail: View {
     }
     .modelContainer(SampleData.shared.modelContainer)
 }
-

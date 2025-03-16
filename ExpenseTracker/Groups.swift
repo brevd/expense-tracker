@@ -1,7 +1,14 @@
+//
+//  CategoryList.swift
+//  ExpenseTracker
+//
+//  Created by Broderick Everitt-deJonge on 2025-03-08.
+//
+
 import SwiftUI
 import SwiftData
 
-struct CategoryList: View {
+struct GroupList: View {
     @Query(sort: \Category.title) private var categories: [Category]
     @Environment(\.modelContext) private var context
     @State private var newCategory: Category?
@@ -10,13 +17,8 @@ struct CategoryList: View {
         NavigationSplitView {
             List {
                 ForEach(categories) { category in
-                    NavigationLink(destination: CategoryDetail(category: category)) {
-                        HStack {
-                            Text(category.title)
-                            Spacer()
-                            Text("$\(category.totalAmount, specifier: "%.2f")")
-                                .foregroundColor(.gray)
-                        }
+                    NavigationLink("\(category.title)") {
+                        CategoryDetail(category: category)
                     }
                 }
                 .onDelete(perform: deleteCategory(indexes:))
@@ -24,7 +26,8 @@ struct CategoryList: View {
             .navigationTitle("Categories")
             .toolbar {
                 ToolbarItem {
-                    Button("Add Category", systemImage: "plus", action: addCategory)
+                    Button(
+                        "Add Category", systemImage: "plus", action: addCategory)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     EditButton()
@@ -41,8 +44,8 @@ struct CategoryList: View {
                 .navigationTitle("Category")
                 .navigationBarTitleDisplayMode(.inline)
         }
-    }
     
+    }
     private func addCategory() {
         let defaultCategory = Category(title: "")
         context.insert(defaultCategory)

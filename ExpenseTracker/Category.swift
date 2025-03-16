@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Category  {
+class Category {
     var title: String
     @Relationship(deleteRule: .cascade, inverse: \Expense.category)
     var expenses = [Expense]()
@@ -18,6 +18,11 @@ class Category  {
         self.title = title
     }
     
+    /// Computed property to sum all expenses in this category
+    var totalAmount: Double {
+        expenses.reduce(0.0) { $0 + NSDecimalNumber(decimal: $1.amount).doubleValue }
+    }
+
     static let sampleData = [
         Category(title: "Groceries"),
         Category(title: "Utilities"),
@@ -27,3 +32,4 @@ class Category  {
         Category(title: "Miscellaneous"),
     ]
 }
+
